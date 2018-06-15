@@ -1,0 +1,32 @@
+version: "3.5"
+services:
+  db-projectName:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    restart: always
+    container_name: projectName-db
+    ports:
+      - "3306:3306"
+    volumes:
+      - projectName_dbdata:/var/lib/mysql
+    networks:
+      - projectName-net # putting this on a network with Lucee means you can just refer to it by the container name in the connection string for the datasource
+
+  lucee-projectName:
+    build:
+      context: ./lucee
+      dockerfile: Dockerfile
+    restart: always
+    container_name: projectName-lucee
+    ports:
+      - "8888:8888" # for multiple instances change 32770 to another port number
+    networks:
+      - projectName-net
+  
+volumes:
+  projectName_dbdata:
+
+networks:
+  projectName-net:
+    driver: bridge
